@@ -1,4 +1,4 @@
-# Assignment 9: n8n Automation – Google Sheets to Gmail
+# n8n Automation – Google Sheets to Gmail
 
 ## 📌 Project Overview
 
@@ -102,6 +102,6 @@ This project demonstrates practical knowledge of workflow automation, Google She
 
 ---
 
-**Assignment:** 9 – n8n Automation: Google Sheets to Gmail  
+**Task:** n8n Automation: Google Sheets to Gmail  
 **Program:** Social Eagle · CAIE Course Program  
 **Status:** Project completed and documented
