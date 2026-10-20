@@ -1,0 +1,200 @@
+{
+  "name": "CAIE Course Program",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "000ace40-5443-4e6e-b4e1-37b90ba5289d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1R7v0CvqMgJ-BJft74IMkCaynYpwsoodzt_wUf9KzkGg",
+          "mode": "list",
+          "cachedResultName": "CAIE Course Program",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1R7v0CvqMgJ-BJft74IMkCaynYpwsoodzt_wUf9KzkGg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1R7v0CvqMgJ-BJft74IMkCaynYpwsoodzt_wUf9KzkGg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "e5bbb53d-cecd-4c67-beb2-f1b448bbb5c9",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ef0pUaTfIxY7K0iD",
+          "name": "AI CEO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst rows = $input.all();\n\nif (rows.length === 0) {\n  return [];\n}\n\nconst escapeHtml = (value) =>\n  String(value ?? \"\")\n    .replace(/&/g, \"&amp;\")\n    .replace(/</g, \"&lt;\")\n    .replace(/>/g, \"&gt;\")\n    .replace(/\"/g, \"&quot;\");\n\nconst records = rows.map((item) => {\n  const row = item.json;\n\n  return `\n    <tr>\n      <td>${escapeHtml(row.Name)}</td>\n      <td>${escapeHtml(row.Course)}</td>\n      <td>${escapeHtml(row.Status)}</td>\n    </tr>\n  `;\n}).join(\"\");\n\nconst subject = `CAIE Course Program - Data Summary (${rows.length} records)`;\n\nconst body = `\n  <div style=\"font-family: Arial, sans-serif; color: #333;\">\n    <h2>CAIE Course Program</h2>\n    <p>Hi,</p>\n    <p>Here is the latest data from the Google Sheet.</p>\n    <p><strong>Total records:</strong> ${rows.length}</p>\n\n    <table style=\"border-collapse: collapse; width: 100%;\">\n      <thead>\n        <tr style=\"background-color: #e8f0fe;\">\n          <th style=\"padding: 10px; border: 1px solid #ddd;\">Name</th>\n          <th style=\"padding: 10px; border: 1px solid #ddd;\">Course</th>\n          <th style=\"padding: 10px; border: 1px solid #ddd;\">Status</th>\n        </tr>\n      </thead>\n      <tbody>${records}</tbody>\n    </table>\n\n    <p>Regards,<br>Your Automation Bot</p>\n  </div>\n`;\n\nreturn [{\n  json: {\n    subject,\n    body,\n    recordCount: rows.length\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "d4c04e07-231c-47d9-a08d-7d7ae2b2871f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7d46000f-4602-4453-a805-4336324a5897",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "374643d2-0ab8-4e71-b300-be5ad14052a7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        688,
+        192
+      ],
+      "id": "1ac9822a-e630-4e87-a4b7-b49a3bbd7e12",
+      "name": "Log - Empty Sheet"
+    },
+    {
+      "parameters": {
+        "sendTo": "siva2532@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "5fe50045-a1d4-4fc8-9a21-9ba6b34d7cc6",
+      "name": "Send a message",
+      "webhookId": "a01e7482-dc9c-4f2d-97cb-3bd4687bc760",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "aElYoFe0uAYRpZBr",
+          "name": "theaiCEO"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log - Empty Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "aa8d4a4e-3ecd-4807-a1e6-35e1848bacc0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f72631a3b0bd24d32f48881962f079c35014b10f4cf29673040d49f5a86a0523"
+  },
+  "nodeGroups": [],
+  "id": "WThn7386JPNAaFGi",
+  "tags": []
+}
